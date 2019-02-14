@@ -5,7 +5,6 @@ import os
 import sys
 import time
 import argparse
-import grequests
 from googletrans import Translator
 from googletrans.utils import format_json
 from retry import retry
