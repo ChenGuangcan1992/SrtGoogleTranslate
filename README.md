@@ -12,7 +12,7 @@
 	
 3、将SrtGoogleTranslate.py复制到C:\Python27\scripts\
 
-4、新建txt，输入：
+4、新建txt，输入以下，并改为.bat运行：
 	C:\Python27\python.exe C:\Python27\scripts\SrtGoogleTranslate.py -p "D:\"
 	或者
 	C:\Python27\python.exe C:\Python27\scripts\SrtGoogleTranslate.py -p "D:\" -d "D:\术语库.txt"
