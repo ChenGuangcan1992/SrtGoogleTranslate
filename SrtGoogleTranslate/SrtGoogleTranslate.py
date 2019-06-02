@@ -18,7 +18,7 @@ translator = Translator(service_urls=['translate.google.com'])
 def sentenceTranslate(line):
 	line = line.strip()
 	try:
-		text = translator.translate(line,src='en',dest='zh-cn').text
+		text = translator.translate(line,src=srcLang,dest='zh-cn').text
 	except:
 		print 'Translate Failed. Please Change Your WAN IP Address!'
 	return text
@@ -68,7 +68,7 @@ def oneTranslate(path,**dict):
                 if lineIdx%4==2:
                     transLines.append(sentenceTranslate(lines[lineIdx])+'\n')
                     #"""进度条"""
-                    sys.stdout.write(str(int((lineIdx*1.0)/len(lines)*10000)/100.0)+'%'+"\r")
+                    sys.stdout.write(tempPath.split('\\')[-1]+': '+str(int((lineIdx*1.0)/len(lines)*10000)/100.0)+'%'+"\r")
                     #"""防止谷歌BanIP"""
                     time.sleep(0.3)
                 transLines.append(lines[lineIdx])
@@ -93,7 +93,13 @@ def oneTranslate(path,**dict):
 parser=argparse.ArgumentParser()
 parser.add_argument('-p',help='Path to the SRT Folder')
 parser.add_argument('-d',help='Path to the Dict File')
+parser.add_argument('-s',help='Source Language')
 args = parser.parse_args()
+if args.s:
+    #视频语言
+    srcLang=args.s
+else:
+    srcLang='en'
 if args.d:
     #"""术语库路径"""
     replaceTablePath=args.d
