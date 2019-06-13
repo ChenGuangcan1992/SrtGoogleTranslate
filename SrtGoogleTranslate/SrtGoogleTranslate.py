@@ -13,8 +13,26 @@ from retry import retry
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
 translator = Translator(service_urls=['translate.google.com'])
 
-#"""单句翻译函数"""
-@retry(delay=60)
+#参数输入
+parser=argparse.ArgumentParser()
+parser.add_argument('-p',help='Path to the SRT Folder')
+parser.add_argument('-d',help='Path to the Dict File')
+parser.add_argument('-s',help='Source Language')
+parser.add_argument('-t',help='Time to Retry')
+args = parser.parse_args()
+if args.t:
+    #重试时间
+    retryTime=int(args.t)
+else:
+    retryTime=60
+if args.s:
+    #视频语言
+    srcLang=args.s
+else:
+    srcLang='en'
+
+#"""单句翻译函数
+@retry(delay=retryTime)
 def sentenceTranslate(line):
 	line = line.strip()
 	try:
@@ -89,17 +107,6 @@ def oneTranslate(path,**dict):
         del lines[:]
         del transLines[:]
 
-#参数输入
-parser=argparse.ArgumentParser()
-parser.add_argument('-p',help='Path to the SRT Folder')
-parser.add_argument('-d',help='Path to the Dict File')
-parser.add_argument('-s',help='Source Language')
-args = parser.parse_args()
-if args.s:
-    #视频语言
-    srcLang=args.s
-else:
-    srcLang='en'
 if args.d:
     #"""术语库路径"""
     replaceTablePath=args.d
