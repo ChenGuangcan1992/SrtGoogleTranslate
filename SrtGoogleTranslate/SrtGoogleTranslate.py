@@ -18,6 +18,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument('-p',help='Path to the SRT Folder')
 parser.add_argument('-d',help='Path to the Dict File')
 parser.add_argument('-s',help='Source Language')
+parser.add_argument('-n',help='No Source Language')
 parser.add_argument('-t',help='Time to Retry')
 args = parser.parse_args()
 if args.t:
@@ -30,6 +31,11 @@ if args.s:
     srcLang=args.s
 else:
     srcLang='en'
+if args.n:
+    #无原字幕
+    srcSrt=False
+else:
+    srcSrt=True
 
 #"""单句翻译函数
 @retry(delay=retryTime)
@@ -79,8 +85,6 @@ def oneTranslate(path,**dict):
         #"""Google翻译"""
         transLines=[]
         if not isTranslate:
-            #"""并发翻译"""
-            #transLines=multiTranslate(lines)
             #"""逐句翻译"""
             for lineIdx in range(len(lines)):
                 if lineIdx%4==2:
@@ -89,7 +93,10 @@ def oneTranslate(path,**dict):
                     sys.stdout.write(tempPath.split('\\')[-1]+': '+str(int((lineIdx*1.0)/len(lines)*10000)/100.0)+'%'+"\r")
                     #"""防止谷歌BanIP"""
                     time.sleep(0.3)
-                transLines.append(lines[lineIdx])
+                if srcSrt:
+                    transLines.append(lines[lineIdx])
+                else:
+                    transLines.append('    '+'\n')
 
             #"""列表转文本"""
             totalContent=''.join(transLines)
