@@ -93,10 +93,15 @@ def oneTranslate(path,**dict):
                     sys.stdout.write(tempPath.split('\\')[-1]+': '+str(int((lineIdx*1.0)/len(lines)*10000)/100.0)+'%'+"\r")
                     #"""防止谷歌BanIP"""
                     time.sleep(0.3)
+                #有原文
                 if srcSrt:
                     transLines.append(lines[lineIdx])
+                #无原文
                 else:
-                    transLines.append('    '+'\n')
+                    if lineIdx%4==2:
+                        transLines.append('    '+'\n')
+                    else:
+                        transLines.append(lines[lineIdx])
 
             #"""列表转文本"""
             totalContent=''.join(transLines)
