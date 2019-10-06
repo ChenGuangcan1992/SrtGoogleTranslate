@@ -2,7 +2,7 @@
 
 使用步骤：  
 1、说明：  
-	需要配合AutoSub使用（https://github.com/agermanidis/autosub/issues/31）  
+	需要配合AutoSub使用（https://github.com/agermanidis/autosub/issues/31 ）  
 	将AutoSub生成的英文字幕批量翻译成中文（上译文下原文形式），并支持术语库文本替换  
 	由于GoogleTranslateAPI会检测异常流量，所以设置了每0.3秒翻译一句避免IP被Ban，如果不幸被Ban请切换下WANIP  
   
@@ -27,3 +27,8 @@
 	替换为  
 	  
 	...	  
+
+6、其他参数：
+	-s 源视频语言
+	-t 重试间隔时间
+	-n 不显示原语言字幕
