@@ -9,10 +9,6 @@ from googletrans import Translator
 from googletrans.utils import format_json
 from retry import retry
 
-#"""Google翻译API"""
-headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-translator = Translator(service_urls=['translate.google.com'])
-
 #参数输入
 parser=argparse.ArgumentParser()
 parser.add_argument('-p',help='Path to the SRT Folder')
@@ -20,6 +16,7 @@ parser.add_argument('-d',help='Path to the Dict File')
 parser.add_argument('-s',help='Source Language')
 parser.add_argument('-n',help='No Source Language')
 parser.add_argument('-t',help='Time to Retry')
+parser.add_argument('-c',help='GoogleCN')
 args = parser.parse_args()
 if args.t:
     #重试时间
@@ -36,6 +33,15 @@ if args.n:
     srcSrt=False
 else:
     srcSrt=True
+if args.c:
+    #使用GoogleCN
+    googleLoc='cn'
+else:
+    googleLoc='com'
+
+#"""Google翻译API"""
+headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+translator = Translator(service_urls=['translate.google.'+googleLoc])
 
 #"""单句翻译函数
 @retry(delay=retryTime)
