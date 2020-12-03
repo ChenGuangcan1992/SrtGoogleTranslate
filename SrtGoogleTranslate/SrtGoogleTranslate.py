@@ -19,6 +19,7 @@ parser.add_argument('-t',help='Time to Retry')
 parser.add_argument('-c',help='Use GoogleCN')
 parser.add_argument('-b',help='Translate Sentence By Sentence')
 parser.add_argument('-g',help='Check Mode')
+parser.add_argument('-a',help='Combine 2SRT')
 args = parser.parse_args()
 if args.t:
     #重试时间
@@ -51,6 +52,11 @@ if args.g:
     chkMode=True
 else:
     chkMode=False
+if args.a:
+    #合并字幕
+    nameExt=args.a
+else:
+    nameExt=''
 
 #"""Google翻译API"""
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
@@ -253,6 +259,50 @@ def senTranslate(path,**dict):
         del transLines[:]
     return 0
 
+def combineTwoSRT(path,path2,**dict):
+    #"""字幕文件1读取"""
+    tempFile = io.open(path,mode='r',encoding='utf-8')
+    lines=[]
+    for line in tempFile:
+        lines.append(line)
+    tempFile.close()
+    #"""字幕文件2读取"""
+    tempFile2 = io.open(path2,mode='r',encoding='utf-8')
+    lines2=[]
+    for line2 in tempFile2:
+        lines2.append(line2)
+    tempFile2.close()
+
+    #"""不是空文件"""
+    if len(lines)>3:
+        transLines=[]
+        for lineIdx in range(len(lines)):
+            if lineIdx%4==2:
+                transLines.append(lines2[lineIdx])
+                #"""进度条"""
+                sys.stdout.write(tempPath.split('\\')[-1]+': '+str(int((lineIdx*1.0)/len(lines)*10000)/100.0)+'%'+"\r")
+            #"""有原文"""
+            if srcSrt:
+                transLines.append(lines[lineIdx])
+
+        #"""列表转文本"""
+        totalContent=''.join(transLines)
+
+        #"""术语库替换"""
+        totalContent=sentenceReplace(totalContent,**dict)
+
+        #"""写入译文"""
+        tempFile = io.open(tempPath,mode='w+',encoding='utf-8')
+        tempFile.write(totalContent)
+        tempFile.close()
+        print(tempPath.split('\\')[-1])
+
+        #"""清理临时列表"""
+        del lines[:]
+        del lines2[:]
+        del transLines[:]      
+    return 0
+
 if args.d:
     #"""术语库路径"""
     replaceTablePath=args.d
@@ -268,7 +318,11 @@ if args.p:
         for filepath in filenames:
             tempPath = os.path.join(dirpath, filepath)
             if filepath[-4:]=='.srt' or filepath[-4:]=='.SRT':
-                if fileTrans:
-                    oneTranslate(tempPath,**rDict)
+                if nameExt=='':
+                    if fileTrans:
+                        oneTranslate(tempPath,**rDict)
+                    else:
+                        senTranslate(tempPath,**rDict)
                 else:
-                    senTranslate(tempPath,**rDict)
+                    tempPath2 = os.path.join(dirpath, filepath[:-4]+nameExt)
+                    combineTwoSRT(tempPath,tempPath2,**rDict)
